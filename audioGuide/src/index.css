@@ -1,0 +1,156 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  font-feature-settings: 'cv11' on, 'ss01' on;
+  line-height: 1.5;
+  font-weight: 400;
+  
+  /* Modern CSS Color 4 support */
+  color-scheme: light dark;
+  
+  /* Tailwind CSS 4 design tokens */
+  --radius: 0.75rem;
+  
+  /* Light theme colors with modern OKLCH */
+  --background: oklch(100% 0 0);
+  --foreground: oklch(9% 0 0);
+  --card: oklch(100% 0 0);
+  --card-foreground: oklch(9% 0 0);
+  --popover: oklch(100% 0 0);
+  --popover-foreground: oklch(9% 0 0);
+  --primary: oklch(47% 0.13 264);
+  --primary-foreground: oklch(98% 0 0);
+  --secondary: oklch(96% 0 0);
+  --secondary-foreground: oklch(9% 0 0);
+  --muted: oklch(96% 0 0);
+  --muted-foreground: oklch(45% 0 0);
+  --accent: oklch(96% 0 0);
+  --accent-foreground: oklch(9% 0 0);
+  --destructive: oklch(58% 0.15 27);
+  --destructive-foreground: oklch(98% 0 0);
+  --border: oklch(89% 0 0);
+  --input: oklch(89% 0 0);
+  --ring: oklch(47% 0.13 264);
+  
+  /* Chart colors */
+  --chart-1: oklch(62% 0.25 29);
+  --chart-2: oklch(70% 0.15 155);
+  --chart-3: oklch(49% 0.12 196);
+  --chart-4: oklch(65% 0.24 305);
+  --chart-5: oklch(64% 0.27 14);
+}
+
+.dark {
+  --background: oklch(9% 0 0);
+  --foreground: oklch(98% 0 0);
+  --card: oklch(9% 0 0);
+  --card-foreground: oklch(98% 0 0);
+  --popover: oklch(9% 0 0);
+  --popover-foreground: oklch(98% 0 0);
+  --primary: oklch(98% 0 0);
+  --primary-foreground: oklch(9% 0 0);
+  --secondary: oklch(14% 0 0);
+  --secondary-foreground: oklch(98% 0 0);
+  --muted: oklch(14% 0 0);
+  --muted-foreground: oklch(63% 0 0);
+  --accent: oklch(14% 0 0);
+  --accent-foreground: oklch(98% 0 0);
+  --destructive: oklch(62% 0.15 27);
+  --destructive-foreground: oklch(98% 0 0);
+  --border: oklch(14% 0 0);
+  --input: oklch(14% 0 0);
+  --ring: oklch(21% 0 0);
+  
+  /* Dark theme chart colors */
+  --chart-1: oklch(70% 0.25 29);
+  --chart-2: oklch(75% 0.15 155);
+  --chart-3: oklch(55% 0.12 196);
+  --chart-4: oklch(70% 0.24 305);
+  --chart-5: oklch(69% 0.27 14);
+}
+
+@theme {
+  /* Semantic color tokens */
+  --color-*: initial;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  
+  /* Chart colors */
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  
+  /* Border radius tokens */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  html {
+    @apply antialiased;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+    margin: 0;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+  
+  /* Remove default margins */
+  h1, h2, h3, h4, h5, h6, p, ul, ol, li, blockquote, figure, hr, pre, fieldset {
+    margin: 0;
+  }
+  
+  /* Modern focus styles */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-ring;
+  }
+  
+  /* Better scrollbar styling */
+  ::-webkit-scrollbar {
+    @apply w-2;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-muted;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-border rounded-full;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground;
+  }
+}
