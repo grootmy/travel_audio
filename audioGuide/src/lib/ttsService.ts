@@ -12,10 +12,6 @@ interface TTSConfig {
 
 export class TTSService {
   private genAI: GoogleGenAI;
-  private defaultSpeakers: Speaker[] = [
-    { name: 'Speaker1', voiceName: 'Kore' },
-    { name: 'Speaker2', voiceName: 'Puck' },
-  ];
 
   constructor(config: TTSConfig) {
     this.genAI = new GoogleGenAI({ apiKey: config.apiKey });
