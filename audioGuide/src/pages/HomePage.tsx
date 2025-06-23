@@ -61,22 +61,14 @@ export const HomePage: React.FC<HomePageProps> = ({ setPage }) => {
 
   // API 호출 함수
   const requestChatCompletion = async (messagesHistory: ApiMessage[]) => {
-    const headers = {
-      project: import.meta.env.VITE_WANTED_PROJECT,
-      apiKey: import.meta.env.VITE_WANTED_API_KEY,
-      'Content-Type': 'application/json; charset=utf-8'
-    };
-
     const body = {
-      hash: import.meta.env.VITE_WANTED_HASH,
       messages: messagesHistory
     };
 
     try {
       const response = await axios.post(
-        '/api/preset/v2/chat/completions',
-        body,
-        { headers }
+        '/api/chat',
+        body
       );
 
       if (response.data && response.data.choices && response.data.choices.length > 0) {
