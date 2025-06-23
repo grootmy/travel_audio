@@ -73,9 +73,8 @@
   --chart-5: oklch(69% 0.27 14);
 }
 
-@theme {
+@theme inline {
   /* Semantic color tokens */
-  --color-*: initial;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -113,7 +112,7 @@
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border outline-ring/50;
   }
   
   html {

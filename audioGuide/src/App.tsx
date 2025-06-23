@@ -1,4 +1,4 @@
-import { useState, useEffect, useTransition } from 'react';
+import React, { useState, useEffect, useTransition } from 'react';
 import { Sun, Moon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { HomePage } from '@/pages/HomePage';
@@ -9,11 +9,15 @@ export default function App() {
   const [page, setPage] = useState<PageType>('home');
   const [darkMode, setDarkMode] = useState(() => {
     if (typeof window !== 'undefined') {
-      return window.matchMedia('(prefers-color-scheme: light)').matches;
+      return !window.matchMedia('(prefers-color-scheme: light)').matches;
     }
     return false;
   });
   const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [page]);
 
   useEffect(() => {
     const root = window.document.documentElement;
