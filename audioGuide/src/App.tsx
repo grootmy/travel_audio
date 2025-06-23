@@ -9,7 +9,7 @@ export default function App() {
   const [page, setPage] = useState<PageType>('home');
   const [darkMode, setDarkMode] = useState(() => {
     if (typeof window !== 'undefined') {
-      return window.matchMedia('(prefers-color-scheme: dark)').matches;
+      return window.matchMedia('(prefers-color-scheme: light)').matches;
     }
     return false;
   });

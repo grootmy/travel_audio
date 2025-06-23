@@ -241,7 +241,7 @@ export const HomePage: React.FC<HomePageProps> = ({ setPage }) => {
                 message.from === 'user' ? 'justify-end' : 'justify-start'
               )}
             >
-              {message.from === 'bot' && (
+              {message.from === 'bot' && index !== 0 && (
                 <Avatar className="w-8 h-8 mt-1">
                   <AvatarFallback className="bg-primary text-primary-foreground">
                     <Bot size={16} />
@@ -259,7 +259,7 @@ export const HomePage: React.FC<HomePageProps> = ({ setPage }) => {
               >
                 <p className="whitespace-pre-wrap break-words">{message.text}</p>
                 
-                {message.from === 'bot' && (
+                {message.from === 'bot' && index !== 0 && (
                   <div className="flex items-center gap-2 mt-2 pt-2 border-t border-border/20">
                     {message.audioUrl ? (
                       <div className="flex items-center gap-2 w-full">
