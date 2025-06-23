@@ -26,7 +26,7 @@ interface MessageWithAudio extends Message {
   isGeneratingAudio?: boolean;
 }
 
-const regions = ['서울', '부산', '제주', '경주', '강릉', '전주', '여수', '대구', '대전', '광주', '인천', '울산', '수원', '용인', '고양', '성남', '청주', '천안'];
+const regions = ['서울', '부산', '제주', '대구', '대전', '광주', '인천', '울산', '충청', '경상', '전라'];
 const companions = ['혼자', '연인과', '친구와', '가족과'];
 const styles = ['느긋한 힐링', '활기찬 액티비티', '맛집 탐방', '문화 예술', '역사 유적'];
 
@@ -291,16 +291,16 @@ export const HomePage: React.FC<HomePageProps> = ({ setPage }) => {
                       onChange={(e) => setSelections(s => ({ ...s, region: e.target.value, detailRegion: '' }))} 
                       value={selections.region}
                       required
-                      className="w-1/2"
+                      className="w-5/6"
                     >
                       <option value="" disabled>지역 선택</option>
                       {regions.map(region => <option key={region} value={region}>{region}</option>)}
                     </Select>
                     <Input
-                      placeholder="상세 장소 (선택 사항)"
+                      placeholder="상세 장소 (선택)"
                       value={selections.detailRegion}
                       onChange={(e) => setSelections(s => ({ ...s, detailRegion: e.target.value }))}
-                      className="w-1/2"
+                      className="w-1/3"
                       disabled={!selections.region}
                     />
                   </div>
