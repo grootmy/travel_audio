@@ -19,8 +19,9 @@ const handler = async (req: VercelRequest, res: VercelResponse) => {
   }
 
   try {
-    // 요청 헤더에서 필요한 정보 추출
-    const { project, apiKey } = req.headers;
+    // 요청 헤더에서 필요한 정보 추출 (소문자로 접근)
+    const project = req.headers['project'];
+    const apiKey = req.headers['apikey'];
     const { hash, messages } = req.body;
 
     // 헤더 검증
@@ -40,8 +41,8 @@ const handler = async (req: VercelRequest, res: VercelResponse) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
-        'project': req.headers.project as string,
-        'apiKey': req.headers.apiKey as string,
+        'project': project as string,
+        'apiKey': apiKey as string,
         'User-Agent': 'vercel-api/1.0.0'
       },
       body: JSON.stringify({
