@@ -26,7 +26,7 @@ interface MessageWithAudio extends Message {
   isGeneratingAudio?: boolean;
 }
 
-const regions = ['서울', '부산', '제주', '대구', '대전', '광주', '인천', '울산', '충청', '경상', '전라'];
+
 const companions = ['혼자', '연인과', '친구와', '가족과'];
 const styles = ['느긋한 힐링', '활기찬 액티비티', '맛집 탐방', '문화 예술', '역사 유적'];
 

@@ -1,12 +1,64 @@
-# React + Vite
+# AI 오디오 가이드 (Audio Docent)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+AI를 활용하여 나만의 맞춤형 여행 오디오 가이드를 생성하는 프로젝트입니다. 사용자는 원하는 여행지와 동행, 여행 스타일을 선택하여 개인화된 대본을 받고, 이를 음성으로 변환하여 들을 수 있습니다.
 
-Currently, two official plugins are available:
+## ✨ 주요 기능
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **맞춤형 가이드 생성**: 여행지, 동행, 여행 스타일을 기반으로 AI가 맞춤형 오디오 가이드 대본을 생성합니다.
+- **자유로운 여행지 입력**: '부산 해운대'처럼 구체적인 장소를 직접 입력하여 가이드를 요청할 수 있습니다.
+- **대화형 인터페이스**: 생성된 가이드에 대해 AI와 추가적인 대화를 나누며 내용을 수정하거나 질문할 수 있습니다.
+- **TTS 오디오 변환**: 생성된 대본을 바탕으로 실감 나는 오디오 가이드를 즉시 생성합니다.
+- **오디오 재생 및 다운로드**: 앱 내에서 생성된 오디오를 바로 듣고, 필요시 MP3 파일로 다운로드할 수 있습니다.
 
-## Expanding the ESLint configuration
+## 🛠️ 기술 스택
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- **Frontend**: React, Vite, TypeScript
+- **Styling**: Tailwind CSS, shadcn/ui
+- **State Management**: React Hooks (useState, useEffect)
+- **HTTP Client**: Axios
+- **AI/TTS**: 외부 API (LaaS, Gemini)
+
+## 🚀 시작하기
+
+### 1. 프로젝트 클론 및 이동
+
+```bash
+# 이 저장소를 클론합니다.
+git clone <repository-url>
+
+# React 애플리케이션 디렉토리로 이동합니다.
+cd audio_docent/audioGuide
+```
+
+### 2. 의존성 설치
+
+```bash
+npm install
+```
+
+### 3. 환경 변수 설정
+
+`audioGuide` 디렉토리 내에 `.env.local` 파일을 생성하고 필요한 API 키를 추가합니다.
+
+```
+VITE_GEMINI_API_KEY="YOUR_GEMINI_API_KEY_HERE"
+```
+
+> **Note**: TTS 기능은 Google Gemini API 키가 필요합니다.
+
+### 4. 개발 서버 실행
+
+```bash
+npm run dev
+```
+
+브라우저에서 `http://localhost:5173`으로 접속하여 애플리케이션을 확인할 수 있습니다.
+
+## 📄 사용 방법
+
+1.  메인 페이지에서 **여행지, 동행, 여행 스타일**을 입력하거나 선택합니다.
+2.  **'나만의 오디오 가이드 생성'** 버튼을 클릭하여 AI가 생성한 첫 번째 가이드 대본을 받습니다.
+3.  생성된 대본 아래의 채팅창을 통해 추가적인 질문이나 수정을 요청할 수 있습니다.
+4.  완성된 대본이 마음에 들면 **'이 대본으로 오디오 생성하기'** 버튼을 클릭하여 음성 파일을 생성합니다.
+5.  생성된 오디오는 내장된 플레이어로 바로 재생하거나 **다운로드**할 수 있습니다.
+6.  **'새 대화'** 버튼을 클릭하여 언제든지 새로운 가이드 생성을 시작할 수 있습니다.
