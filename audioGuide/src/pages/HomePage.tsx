@@ -26,7 +26,6 @@ interface MessageWithAudio extends Message {
 }
 
 export const HomePage: React.FC<HomePageProps> = ({ setPage }) => {
-  const [showChat, setShowChat] = useState(false);
   const [messages, setMessages] = useState<MessageWithAudio[]>([
     { 
       from: 'bot', 
@@ -187,21 +186,37 @@ export const HomePage: React.FC<HomePageProps> = ({ setPage }) => {
     URL.revokeObjectURL(url);
   };
 
-  if (showChat) {
-    return (
-      <div className="flex flex-col h-full">
-        {/* 헤더 */}
-        <div className="flex items-center justify-between p-4 border-b bg-card/50 backdrop-blur-sm">
-          <Button 
-            variant="ghost" 
-            onClick={() => setShowChat(false)}
-            className="flex items-center gap-2"
-          >
-            <Headphones size={20} />
-            <span>오디오 트립</span>
-          </Button>
+  return (
+    <div className="flex flex-col h-full">
+      {/* 메인 헤더 섹션 */}
+      <div className="flex flex-col items-center justify-center p-8 bg-gradient-to-br from-background via-background to-accent/20">
+        <div className="flex items-center gap-4 mb-6 animate-in fade-in slide-in-from-top duration-700">
+          <div className="relative">
+            <Headphones className="text-primary" size={48}/>
+            <Sparkles className="absolute -top-2 -right-2 text-primary/60 animate-pulse" size={20} />
+          </div>
+          <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
+            오디오 트립
+          </h1>
+        </div>
+        
+        <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl leading-relaxed text-center animate-in fade-in slide-in-from-bottom duration-700 delay-200">
+          <span className="text-primary font-semibold">AI가 만드는</span> 당신만의 특별한 오디오 가이드로<br />
+          <span className="text-foreground">새로운 여행의 경험</span>을 시작해보세요
+        </p>
+      </div>
+
+      {/* 채팅 컨테이너 */}
+      <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full px-4">
+        {/* 채팅 헤더 */}
+        <div className="flex items-center justify-between p-4 border-b bg-card/50 backdrop-blur-sm rounded-t-lg">
+          <div className="flex items-center gap-2">
+            <Bot size={20} className="text-primary" />
+            <span className="font-medium">AI 가이드와 채팅하기</span>
+          </div>
           <Button 
             variant="outline"
+            size="sm"
             onClick={() => {
               setMessages([
                 { 
@@ -217,7 +232,7 @@ export const HomePage: React.FC<HomePageProps> = ({ setPage }) => {
         </div>
 
         {/* 채팅 영역 */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-card/30 min-h-[400px]">
           {messages.map((message, index) => (
             <div
               key={index}
@@ -313,8 +328,8 @@ export const HomePage: React.FC<HomePageProps> = ({ setPage }) => {
         </div>
 
         {/* 입력 영역 */}
-        <div className="border-t bg-card/50 backdrop-blur-sm p-4">
-          <div className="flex gap-2 max-w-4xl mx-auto">
+        <div className="border-t bg-card/50 backdrop-blur-sm p-4 rounded-b-lg">
+          <div className="flex gap-2">
             <Input
               value={input}
               onChange={(e) => setInput(e.target.value)}
@@ -337,72 +352,9 @@ export const HomePage: React.FC<HomePageProps> = ({ setPage }) => {
           </div>
         </div>
       </div>
-    );
-  }
-
-  return (
-    <div className="flex flex-col items-center justify-center h-full p-8 text-center bg-gradient-to-br from-background via-background to-accent/20">
-      {/* 메인 헤더 */}
-      <div className="flex items-center gap-4 mb-6 animate-in fade-in slide-in-from-top duration-700">
-        <div className="relative">
-          <Headphones className="text-primary" size={48}/>
-          <Sparkles className="absolute -top-2 -right-2 text-primary/60 animate-pulse" size={20} />
-        </div>
-        <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
-          오디오 트립
-        </h1>
-      </div>
       
-      {/* 서브 타이틀 */}
-      <p className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-3xl leading-relaxed animate-in fade-in slide-in-from-bottom duration-700 delay-200">
-        <span className="text-primary font-semibold">AI가 만드는</span> 당신만의 특별한 오디오 가이드로<br />
-        <span className="text-foreground">새로운 여행의 경험</span>을 시작해보세요
-      </p>
-
-      {/* 메인 액션 카드 */}
-      <div className="w-full max-w-lg animate-in fade-in slide-in-from-bottom duration-700 delay-300">
-        <Card 
-          onClick={() => setShowChat(true)}
-          className="group cursor-pointer transition-all duration-500 hover:shadow-2xl hover:-translate-y-3 hover:scale-[1.02] border-2 border-transparent hover:border-primary/20 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm"
-        >
-          <CardHeader className="items-center pb-6">
-            <div className="relative mb-4">
-              <div className="bg-gradient-to-br from-primary/20 to-primary/10 p-6 rounded-2xl mb-4 group-hover:scale-110 transition-transform duration-300">
-                <Mic size={40} className="text-primary" />
-              </div>
-              <div className="absolute -inset-2 bg-primary/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            </div>
-            <CardTitle className="text-2xl md:text-3xl group-hover:text-primary transition-colors duration-300">
-              나만의 오디오 가이드 만들기
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="text-center">
-            <CardDescription className="text-base leading-relaxed mb-4 group-hover:text-foreground/90 transition-colors duration-300">
-              AI와 대화하며 당신의 여행 스타일에 완벽하게 맞는<br />
-              <span className="text-primary font-medium">맞춤형 오디오 가이드</span>를 생성해보세요
-            </CardDescription>
-            <div className="bg-primary/10 rounded-lg p-3 mb-4">
-              <p className="text-sm text-muted-foreground">
-                💡 <strong>데모 체험:</strong> 바로 시작해서 채팅 후 오디오 생성까지!
-              </p>
-            </div>
-            <Button className="w-full group-hover:scale-105 transition-transform duration-300">
-              지금 시작하기
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-      
-      {/* 하단 장식 요소 */}
-      <div className="mt-16 flex gap-4 opacity-60 animate-in fade-in duration-1000 delay-500">
-        {[...Array(5)].map((_, i) => (
-          <div
-            key={i}
-            className="w-2 h-2 rounded-full bg-primary/40 animate-pulse"
-            style={{ animationDelay: `${i * 0.2}s` }}
-          />
-        ))}
-      </div>
+      {/* 하단 여백 */}
+      <div className="p-4"></div>
     </div>
   );
 }; 
