@@ -40,8 +40,8 @@ const handler = async (req: VercelRequest, res: VercelResponse) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
-        'project': project as string,
-        'apiKey': apiKey as string,
+        'project': req.headers.project as string,
+        'apiKey': req.headers.apiKey as string,
         'User-Agent': 'vercel-api/1.0.0'
       },
       body: JSON.stringify({
