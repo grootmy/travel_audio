@@ -40,7 +40,7 @@ export const HomePage: React.FC<HomePageProps> = ({ setPage }) => {
   const [apiMessages, setApiMessages] = useState<ApiMessage[]>([]);
   const [input, setInput] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
-  const [selections, setSelections] = useState({ region: '', detailRegion: '', companion: '', style: '' });
+  const [selections, setSelections] = useState({ location: '', companion: '', style: '' });
   const [isSubmitted, setIsSubmitted] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const [ttsService, setTtsService] = useState<TTSService | null>(null);
@@ -91,10 +91,9 @@ export const HomePage: React.FC<HomePageProps> = ({ setPage }) => {
   };
 
   const handleInitialSubmit = async () => {
-    if (!selections.region || !selections.companion || !selections.style || isGenerating) return;
+    if (!selections.location || !selections.companion || !selections.style || isGenerating) return;
 
-    const location = selections.detailRegion ? `${selections.region} ${selections.detailRegion}` : selections.region;
-    const userMessage = `${location}에서 ${selections.companion} 즐기는 ${selections.style} 여행을 위한 오디오 가이드를 만들어줘.`;
+    const userMessage = `${selections.location}에서 ${selections.companion} 즐기는 ${selections.style} 여행을 위한 오디오 가이드를 만들어줘.`;
     
     setIsGenerating(true);
     setIsSubmitted(true);
@@ -248,7 +247,7 @@ export const HomePage: React.FC<HomePageProps> = ({ setPage }) => {
       }
     ]);
     setApiMessages([]);
-    setSelections({ region: '', detailRegion: '', companion: '', style: '' });
+    setSelections({ location: '', companion: '', style: '' });
     setIsSubmitted(false);
     setIsGenerating(false);
   }
@@ -286,24 +285,12 @@ export const HomePage: React.FC<HomePageProps> = ({ setPage }) => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="md:col-span-2">
                   <label className="text-sm font-medium mb-2 block">어디로 가시나요?</label>
-                  <div className="flex gap-2">
-                    <Select 
-                      onChange={(e) => setSelections(s => ({ ...s, region: e.target.value, detailRegion: '' }))} 
-                      value={selections.region}
-                      required
-                      className="w-5/6"
-                    >
-                      <option value="" disabled>지역 선택</option>
-                      {regions.map(region => <option key={region} value={region}>{region}</option>)}
-                    </Select>
-                    <Input
-                      placeholder="상세 장소 (선택)"
-                      value={selections.detailRegion}
-                      onChange={(e) => setSelections(s => ({ ...s, detailRegion: e.target.value }))}
-                      className="w-1/3"
-                      disabled={!selections.region}
-                    />
-                  </div>
+                  <Input
+                    placeholder="부산 해운대"
+                    value={selections.location}
+                    onChange={(e) => setSelections(s => ({ ...s, location: e.target.value }))}
+                    required
+                  />
                 </div>
                 <div>
                   <label className="text-sm font-medium mb-2 block">누구와 함께가나요?</label>
@@ -330,7 +317,7 @@ export const HomePage: React.FC<HomePageProps> = ({ setPage }) => {
               </div>
               <Button
                 onClick={handleInitialSubmit}
-                disabled={!selections.region || !selections.companion || !selections.style || isGenerating}
+                disabled={!selections.location || !selections.companion || !selections.style || isGenerating}
                 className="w-full"
                 size="lg"
               >
