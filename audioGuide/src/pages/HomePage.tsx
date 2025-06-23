@@ -26,8 +26,8 @@ interface MessageWithAudio extends Message {
   isGeneratingAudio?: boolean;
 }
 
-const regions = ['서울', '부산', '제주', '경주', '강릉', '전주', '여수'];
-const companions = ['혼자', '연인과', '친구와', '가족과', '반려동물과'];
+const regions = ['서울', '부산', '제주', '경주', '강릉', '전주', '여수', '대구', '대전', '광주', '인천', '울산', '수원', '용인', '고양', '성남', '청주', '천안'];
+const companions = ['혼자', '연인과', '친구와', '가족과'];
 const styles = ['느긋한 힐링', '활기찬 액티비티', '맛집 탐방', '문화 예술', '역사 유적'];
 
 export const HomePage: React.FC<HomePageProps> = ({ setPage }) => {
@@ -40,7 +40,7 @@ export const HomePage: React.FC<HomePageProps> = ({ setPage }) => {
   const [apiMessages, setApiMessages] = useState<ApiMessage[]>([]);
   const [input, setInput] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
-  const [selections, setSelections] = useState({ region: '', companion: '', style: '' });
+  const [selections, setSelections] = useState({ region: '', detailRegion: '', companion: '', style: '' });
   const [isSubmitted, setIsSubmitted] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const [ttsService, setTtsService] = useState<TTSService | null>(null);
@@ -93,7 +93,8 @@ export const HomePage: React.FC<HomePageProps> = ({ setPage }) => {
   const handleInitialSubmit = async () => {
     if (!selections.region || !selections.companion || !selections.style || isGenerating) return;
 
-    const userMessage = `${selections.region}에서 ${selections.companion} 즐기는 ${selections.style} 여행을 위한 오디오 가이드를 만들어줘.`;
+    const location = selections.detailRegion ? `${selections.region} ${selections.detailRegion}` : selections.region;
+    const userMessage = `${location}에서 ${selections.companion} 즐기는 ${selections.style} 여행을 위한 오디오 가이드를 만들어줘.`;
     
     setIsGenerating(true);
     setIsSubmitted(true);
@@ -247,7 +248,7 @@ export const HomePage: React.FC<HomePageProps> = ({ setPage }) => {
       }
     ]);
     setApiMessages([]);
-    setSelections({ region: '', companion: '', style: '' });
+    setSelections({ region: '', detailRegion: '', companion: '', style: '' });
     setIsSubmitted(false);
     setIsGenerating(false);
   }
@@ -283,16 +284,26 @@ export const HomePage: React.FC<HomePageProps> = ({ setPage }) => {
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
+                <div className="md:col-span-2">
                   <label className="text-sm font-medium mb-2 block">어디로 가시나요?</label>
-                  <Select 
-                    onChange={(e) => setSelections(s => ({ ...s, region: e.target.value }))} 
-                    value={selections.region}
-                    required
-                  >
-                    <option value="" disabled>지역 선택</option>
-                    {regions.map(region => <option key={region} value={region}>{region}</option>)}
-                  </Select>
+                  <div className="flex gap-2">
+                    <Select 
+                      onChange={(e) => setSelections(s => ({ ...s, region: e.target.value, detailRegion: '' }))} 
+                      value={selections.region}
+                      required
+                      className="w-1/2"
+                    >
+                      <option value="" disabled>지역 선택</option>
+                      {regions.map(region => <option key={region} value={region}>{region}</option>)}
+                    </Select>
+                    <Input
+                      placeholder="상세 장소 (선택 사항)"
+                      value={selections.detailRegion}
+                      onChange={(e) => setSelections(s => ({ ...s, detailRegion: e.target.value }))}
+                      className="w-1/2"
+                      disabled={!selections.region}
+                    />
+                  </div>
                 </div>
                 <div>
                   <label className="text-sm font-medium mb-2 block">누구와 함께가나요?</label>
@@ -305,7 +316,7 @@ export const HomePage: React.FC<HomePageProps> = ({ setPage }) => {
                     {companions.map(companion => <option key={companion} value={companion}>{companion}</option>)}
                   </Select>
                 </div>
-                <div>
+                <div className="md:col-span-3">
                   <label className="text-sm font-medium mb-2 block">어떤 스타일을 원하세요?</label>
                   <Select 
                     onChange={(e) => setSelections(s => ({ ...s, style: e.target.value }))} 
