@@ -3,7 +3,6 @@ import { Sun, Moon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { HomePage } from '@/pages/HomePage';
 import { ChatPage } from '@/pages/ChatPage';
-import { ExplorePage } from '@/pages/ExplorePage';
 import type { PageType } from '@/types';
 
 export default function App() {
@@ -48,8 +47,6 @@ export default function App() {
     switch (page) {
       case 'chat':
         return <ChatPage setPage={handlePageChange} />;
-      case 'explore':
-        return <ExplorePage setPage={handlePageChange} />;
       case 'home':
       default:
         return <HomePage setPage={handlePageChange} />;

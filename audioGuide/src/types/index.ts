@@ -13,4 +13,4 @@ export interface Message {
   text: string;
 }
 
-export type PageType = 'home' | 'chat' | 'explore'; 
+export type PageType = 'home' | 'chat'; 
