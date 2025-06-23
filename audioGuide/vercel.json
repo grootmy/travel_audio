@@ -1,8 +1,7 @@
 {
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "https://api-laas.wanted.co.kr/api/$1"
+  "functions": {
+    "api/preset/v2/chat/completions.ts": {
+      "runtime": "@vercel/node"
     }
-  ]
+  }
 } 
