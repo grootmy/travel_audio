@@ -1,7 +1,7 @@
 {
   "functions": {
     "api/preset/v2/chat/completions.ts": {
-      "runtime": "@vercel/node"
+      "runtime": "nodejs20.x"
     }
   },
   "headers": [
