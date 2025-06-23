@@ -14,9 +14,9 @@ export default async function handler(
     return res.status(400).json({ message: 'Missing messages in request body' });
   }
 
-  const wantedApiKey = process.env.WANTED_API_KEY;
-  const wantedProject = process.env.WANTED_PROJECT;
-  const wantedHash = process.env.WANTED_HASH;
+  const wantedApiKey = process.env.VITE_WANTED_API_KEY;
+  const wantedProject = process.env.VITE_WANTED_PROJECT;
+  const wantedHash = process.env.VITE_WANTED_HASH;
 
   if (!wantedApiKey || !wantedProject || !wantedHash) {
     return res.status(500).json({ message: 'API environment variables are not configured correctly on the server.' });
