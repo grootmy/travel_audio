@@ -9,6 +9,7 @@ import { TTSService } from '@/lib/ttsService';
 import { cn } from '@/lib/utils';
 import type { PageType, Message } from '@/types';
 import axios, { AxiosError } from 'axios';
+import { Select } from "@/components/ui/select";
 
 interface HomePageProps {
   setPage: (page: PageType) => void;
@@ -25,16 +26,22 @@ interface MessageWithAudio extends Message {
   isGeneratingAudio?: boolean;
 }
 
+const regions = ['서울', '부산', '제주', '경주', '강릉', '전주', '여수'];
+const companions = ['혼자', '연인과', '친구와', '가족과', '반려동물과'];
+const styles = ['느긋한 힐링', '활기찬 액티비티', '맛집 탐방', '문화 예술', '역사 유적'];
+
 export const HomePage: React.FC<HomePageProps> = ({ setPage }) => {
   const [messages, setMessages] = useState<MessageWithAudio[]>([
     { 
       from: 'bot', 
-      text: '안녕하세요! 어떤 여행을 위한 오디오 가이드북을 만들어 드릴까요? 자유롭게 대화해보세요!' 
+      text: '안녕하세요! 어떤 여행을 위한 오디오 가이드북을 만들어 드릴까요? 아래에서 원하는 여행 스타일을 선택하고 시작해보세요!' 
     }
   ]);
   const [apiMessages, setApiMessages] = useState<ApiMessage[]>([]);
   const [input, setInput] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [selections, setSelections] = useState({ region: '', companion: '', style: '' });
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const [ttsService, setTtsService] = useState<TTSService | null>(null);
 
@@ -80,6 +87,52 @@ export const HomePage: React.FC<HomePageProps> = ({ setPage }) => {
     } catch (error) {
       console.error('Error during chat completion request:', error);
       throw error;
+    }
+  };
+
+  const handleInitialSubmit = async () => {
+    if (!selections.region || !selections.companion || !selections.style || isGenerating) return;
+
+    const userMessage = `${selections.region}에서 ${selections.companion} 즐기는 ${selections.style} 여행을 위한 오디오 가이드를 만들어줘.`;
+    
+    setIsGenerating(true);
+    setIsSubmitted(true);
+
+    const newMessages = [...messages, { from: 'user' as const, text: userMessage }];
+    setMessages(newMessages);
+    
+    const newApiMessages = [...apiMessages, { role: 'user' as const, content: userMessage }];
+
+    try {
+      const response = await requestChatCompletion(newApiMessages);
+      
+      if (response) {
+        setMessages(prev => [...prev, { from: 'bot', text: response }]);
+        setApiMessages([...newApiMessages, { role: 'assistant', content: response }]);
+      } else {
+        setMessages(prev => [...prev, { 
+          from: 'bot', 
+          text: '죄송합니다. 응답을 생성하는데 문제가 발생했습니다. 다시 시도해주세요.' 
+        }]);
+      }
+    } catch (error) {
+      console.error('Chat API Error:', error);
+      let errorMessage = '죄송합니다. 서버와의 연결에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.';
+      
+      if (error instanceof AxiosError) {
+        if (error.response?.status === 403) {
+          errorMessage = '인증 오류가 발생했습니다. API 설정을 확인해주세요.';
+        } else if (error.response?.status === 429) {
+          errorMessage = '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.';
+        }
+      }
+      
+      setMessages(prev => [...prev, { 
+        from: 'bot', 
+        text: errorMessage
+      }]);
+    } finally {
+      setIsGenerating(false);
     }
   };
 
@@ -186,6 +239,19 @@ export const HomePage: React.FC<HomePageProps> = ({ setPage }) => {
     URL.revokeObjectURL(url);
   };
 
+  const handleReset = () => {
+    setMessages([
+      { 
+        from: 'bot', 
+        text: '안녕하세요! 어떤 여행을 위한 오디오 가이드북을 만들어 드릴까요? 아래에서 원하는 여행 스타일을 선택하고 시작해보세요!' 
+      }
+    ]);
+    setApiMessages([]);
+    setSelections({ region: '', companion: '', style: '' });
+    setIsSubmitted(false);
+    setIsGenerating(false);
+  }
+
   return (
     <div className="flex flex-col h-full">
       {/* 메인 헤더 섹션 */}
@@ -208,6 +274,62 @@ export const HomePage: React.FC<HomePageProps> = ({ setPage }) => {
 
       {/* 채팅 컨테이너 */}
       <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full px-4">
+        {/* 선택 UI */}
+        {!isSubmitted && (
+          <Card className="animate-in fade-in duration-500 mb-4">
+            <CardHeader>
+              <CardTitle>어떤 여행을 떠나시나요?</CardTitle>
+              <CardDescription>원하는 옵션을 선택하고 맞춤형 오디오 가이드를 생성해보세요.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="text-sm font-medium mb-2 block">어디로 가시나요?</label>
+                  <Select 
+                    onChange={(e) => setSelections(s => ({ ...s, region: e.target.value }))} 
+                    value={selections.region}
+                    required
+                  >
+                    <option value="" disabled>지역 선택</option>
+                    {regions.map(region => <option key={region} value={region}>{region}</option>)}
+                  </Select>
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-2 block">누구와 함께가나요?</label>
+                  <Select 
+                    onChange={(e) => setSelections(s => ({ ...s, companion: e.target.value }))} 
+                    value={selections.companion}
+                    required
+                  >
+                    <option value="" disabled>동행 선택</option>
+                    {companions.map(companion => <option key={companion} value={companion}>{companion}</option>)}
+                  </Select>
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-2 block">어떤 스타일을 원하세요?</label>
+                  <Select 
+                    onChange={(e) => setSelections(s => ({ ...s, style: e.target.value }))} 
+                    value={selections.style}
+                    required
+                  >
+                    <option value="" disabled>스타일 선택</option>
+                    {styles.map(style => <option key={style} value={style}>{style}</option>)}
+                  </Select>
+                </div>
+              </div>
+              <Button
+                onClick={handleInitialSubmit}
+                disabled={!selections.region || !selections.companion || !selections.style || isGenerating}
+                className="w-full"
+                size="lg"
+              >
+                {isGenerating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
+                나만의 오디오 가이드 생성
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
         {/* 채팅 헤더 */}
         <div className="flex items-center justify-between p-4 border-b bg-card/50 backdrop-blur-sm rounded-t-lg">
           <div className="flex items-center gap-2">
@@ -217,15 +339,7 @@ export const HomePage: React.FC<HomePageProps> = ({ setPage }) => {
           <Button 
             variant="outline"
             size="sm"
-            onClick={() => {
-              setMessages([
-                { 
-                  from: 'bot', 
-                  text: '안녕하세요! 어떤 여행을 위한 오디오 가이드북을 만들어 드릴까요? 자유롭게 대화해보세요!' 
-                }
-              ]);
-              setApiMessages([]);
-            }}
+            onClick={handleReset}
           >
             새 대화
           </Button>
@@ -241,7 +355,7 @@ export const HomePage: React.FC<HomePageProps> = ({ setPage }) => {
                 message.from === 'user' ? 'justify-end' : 'justify-start'
               )}
             >
-              {message.from === 'bot' && index !== 0 && (
+              {message.from === 'bot' && (
                 <Avatar className="w-8 h-8 mt-1">
                   <AvatarFallback className="bg-primary text-primary-foreground">
                     <Bot size={16} />
@@ -251,47 +365,42 @@ export const HomePage: React.FC<HomePageProps> = ({ setPage }) => {
               
               <div
                 className={cn(
-                  "max-w-[80%] rounded-lg px-4 py-2 relative group",
+                  "p-3 rounded-lg max-w-xl",
                   message.from === 'user'
-                    ? 'bg-primary text-primary-foreground ml-12'
-                    : 'bg-muted text-foreground mr-12'
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted"
                 )}
               >
-                <p className="whitespace-pre-wrap break-words">{message.text}</p>
-                
-                {message.from === 'bot' && index !== 0 && (
-                  <div className="flex items-center gap-2 mt-2 pt-2 border-t border-border/20">
-                    {message.audioUrl ? (
-                      <div className="flex items-center gap-2 w-full">
-                        <AudioPlayer audioUrl={message.audioUrl} />
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => downloadAudio(index)}
-                          className="h-8 w-8 p-0"
-                        >
-                          <Download size={14} />
-                        </Button>
+                <p className="whitespace-pre-wrap">{message.text}</p>
+                {message.from === 'bot' && ttsService?.hasSpeakers(message.text) && (
+                  <div className="mt-3 pt-3 border-t border-muted-foreground/20">
+                    {message.isGeneratingAudio ? (
+                      <div className="flex items-center text-sm text-muted-foreground">
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        오디오를 생성하는 중입니다...
+                      </div>
+                    ) : message.audioUrl ? (
+                      <div className="flex flex-col gap-2">
+                         <AudioPlayer audioUrl={message.audioUrl} />
+                         <Button
+                           variant="ghost"
+                           size="sm"
+                           onClick={() => downloadAudio(index)}
+                           className="w-full"
+                         >
+                           <Download className="mr-2 h-4 w-4" />
+                           오디오 파일 다운로드
+                         </Button>
                       </div>
                     ) : (
                       <Button
-                        variant="ghost"
+                        variant="default"
                         size="sm"
                         onClick={() => generateAudio(index)}
-                        disabled={message.isGeneratingAudio}
-                        className="text-xs"
+                        className="w-full bg-primary/80 hover:bg-primary"
                       >
-                        {message.isGeneratingAudio ? (
-                          <>
-                            <Loader2 size={14} className="animate-spin mr-1" />
-                            생성 중...
-                          </>
-                        ) : (
-                          <>
-                            <Volume2 size={14} className="mr-1" />
-                            오디오 생성
-                          </>
-                        )}
+                        <Volume2 className="mr-2 h-4 w-4" />
+                        이 대본으로 오디오 생성하기
                       </Button>
                     )}
                   </div>
@@ -300,54 +409,47 @@ export const HomePage: React.FC<HomePageProps> = ({ setPage }) => {
               
               {message.from === 'user' && (
                 <Avatar className="w-8 h-8 mt-1">
-                  <AvatarFallback className="bg-secondary text-secondary-foreground">
+                  <AvatarFallback>
                     <User size={16} />
                   </AvatarFallback>
                 </Avatar>
               )}
             </div>
           ))}
-          
           {isGenerating && (
-            <div className="flex gap-3 justify-start animate-in fade-in slide-in-from-bottom duration-300">
+            <div className="flex justify-start gap-3">
               <Avatar className="w-8 h-8 mt-1">
                 <AvatarFallback className="bg-primary text-primary-foreground">
                   <Bot size={16} />
                 </AvatarFallback>
               </Avatar>
-              <div className="bg-muted text-foreground rounded-lg px-4 py-2 max-w-[80%] mr-12">
-                <div className="flex items-center gap-2">
-                  <Loader2 size={16} className="animate-spin" />
-                  <span className="text-sm">답변을 생성하고 있습니다...</span>
-                </div>
+              <div className="p-3 rounded-lg bg-muted flex items-center">
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <span>가이드를 생성 중입니다...</span>
               </div>
             </div>
           )}
-          
           <div ref={chatEndRef} />
         </div>
-
-        {/* 입력 영역 */}
-        <div className="border-t bg-card/50 backdrop-blur-sm p-4 rounded-b-lg">
-          <div className="flex gap-2">
+        
+        {/* 입력창 */}
+        <div className="p-4 border-t bg-card/50 backdrop-blur-sm rounded-b-lg">
+          <div className="relative">
             <Input
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="여행에 대해 자유롭게 이야기해보세요..."
-              disabled={isGenerating}
-              className="flex-1"
+              placeholder={isSubmitted ? "추가 질문을 입력하세요..." : "먼저 위에서 옵션을 선택하여 가이드를 생성해주세요."}
+              className="pr-10"
+              disabled={!isSubmitted || isGenerating}
             />
             <Button
-              onClick={handleSend}
-              disabled={!input.trim() || isGenerating}
               size="icon"
+              className="absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7"
+              onClick={handleSend}
+              disabled={!isSubmitted || !input.trim() || isGenerating}
             >
-              {isGenerating ? (
-                <Loader2 size={16} className="animate-spin" />
-              ) : (
-                <Send size={16} />
-              )}
+              <Send size={16} />
             </Button>
           </div>
         </div>
