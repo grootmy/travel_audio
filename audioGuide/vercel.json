@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "https://api-laas.wanted.co.kr/api/$1"
+    }
+  ]
+} 

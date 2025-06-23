@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils';
 import type { PageType, Message } from '@/types';
 import axios, { AxiosError } from 'axios';
 import { Select } from "@/components/ui/select";
+import { API_CONFIG, API_ENDPOINTS } from '@/lib/apiConfig';
 
 interface HomePageProps {
   setPage: (page: PageType) => void;
@@ -62,13 +63,18 @@ export const HomePage: React.FC<HomePageProps> = ({ setPage }) => {
   // API 호출 함수
   const requestChatCompletion = async (messagesHistory: ApiMessage[]) => {
     const body = {
+      hash: API_CONFIG.hash,
       messages: messagesHistory
     };
 
     try {
+      console.log('전송할 헤더:', API_CONFIG.headers);
+      console.log('전송할 데이터:', body);
+      
       const response = await axios.post(
-        '/api/chat',
-        body
+        `${API_CONFIG.baseURL}${API_ENDPOINTS.chatCompletions}`,
+        body,
+        { headers: API_CONFIG.headers }
       );
 
       if (response.data && response.data.choices && response.data.choices.length > 0) {
@@ -78,6 +84,11 @@ export const HomePage: React.FC<HomePageProps> = ({ setPage }) => {
       return null;
     } catch (error) {
       console.error('Error during chat completion request:', error);
+      if (error instanceof AxiosError && error.response) {
+        console.error('Response status:', error.response.status);
+        console.error('Response data:', error.response.data);
+        console.error('Response headers:', error.response.headers);
+      }
       throw error;
     }
   };

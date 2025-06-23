@@ -8,6 +8,7 @@ import { TTSService } from '@/lib/ttsService';
 import { cn } from '@/lib/utils';
 import type { Message, PageType } from '@/types';
 import axios, { AxiosError } from 'axios';
+import { API_CONFIG, API_ENDPOINTS } from '@/lib/apiConfig';
 
 interface ChatPageProps {
   setPage: (page: PageType) => void;
@@ -53,25 +54,19 @@ export const ChatPage: React.FC<ChatPageProps> = ({ setPage }) => {
 
   // API 호출 함수
   const requestChatCompletion = async (messagesHistory: ApiMessage[]) => {
-    const headers = {
-      project: 'KNTO-PROMPTON-146',
-      apiKey: '774a536edd85151a8e04c879444cee77f05328d4d578ef0a31d2599eff3cffd1',
-      'Content-Type': 'application/json; charset=utf-8'
-    };
-
     const body = {
-      hash: '6814121a43c93b280c00af257655dd60f379ec058339b0c03f9d74822757e773',
+      hash: API_CONFIG.hash,
       messages: messagesHistory
     };
 
     try {
-      console.log('전송할 헤더:', headers);
+      console.log('전송할 헤더:', API_CONFIG.headers);
       console.log('전송할 데이터:', body);
       
       const response = await axios.post(
-        '/api/preset/v2/chat/completions',
+        `${API_CONFIG.baseURL}${API_ENDPOINTS.chatCompletions}`,
         body,
-        { headers }
+        { headers: API_CONFIG.headers }
       );
 
       if (response.data && response.data.choices && response.data.choices.length > 0) {
