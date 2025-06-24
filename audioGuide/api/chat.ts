@@ -8,10 +8,15 @@ export default async function handler(
     return res.status(405).json({ message: 'Only POST requests are allowed' });
   }
 
-  const { messages } = req.body;
+  const { params } = req.body;
 
-  if (!messages) {
-    return res.status(400).json({ message: 'Missing messages in request body' });
+  if (!params) {
+    return res.status(400).json({ message: 'Missing params in request body' });
+  }
+
+  // params 구조 검증
+  if (!params.place || !params.people || !params.purpose) {
+    return res.status(400).json({ message: 'Missing required params fields: place, people, purpose' });
   }
 
   const wantedApiKey = process.env.VITE_WANTED_API_KEY;
@@ -30,7 +35,7 @@ export default async function handler(
 
   const body = {
     hash: wantedHash,
-    messages: messages,
+    params: params,
   };
 
   try {

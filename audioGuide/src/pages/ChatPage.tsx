@@ -29,10 +29,10 @@ export const ChatPage: React.FC<ChatPageProps> = ({ setPage }) => {
   const [messages, setMessages] = useState<MessageWithAudio[]>([
     { 
       from: 'bot', 
-      text: '안녕하세요! 어떤 여행을 위한 오디오 가이드북을 만들어 드릴까요? 자유롭게 대화해보세요!' 
+      text: '안녕하세요! 자유롭게 대화하며 오디오 가이드를 만들어보세요. 예: "부산 해운대에서 친구와 함께 힐링 여행 가이드 만들어줘"' 
     }
   ]);
-  const [apiMessages, setApiMessages] = useState<ApiMessage[]>([]); // API 요청을 위한 메시지 히스토리
+  const [apiMessages, setApiMessages] = useState<ApiMessage[]>([]);
   const [input, setInput] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -52,7 +52,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({ setPage }) => {
     }
   }, []);
 
-  // API 호출 함수
+  // 기존 채팅 방식 API 호출 함수 (fallback으로 사용)
   const requestChatCompletion = async (messagesHistory: ApiMessage[]) => {
     const body = {
       hash: API_CONFIG.hash,
@@ -149,7 +149,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({ setPage }) => {
     setMessages([
       { 
         from: 'bot', 
-        text: '안녕하세요! 어떤 여행을 위한 오디오 가이드북을 만들어 드릴까요? 자유롭게 대화해보세요!' 
+        text: '안녕하세요! 자유롭게 대화하며 오디오 가이드를 만들어보세요. 예: "부산 해운대에서 친구와 함께 힐링 여행 가이드 만들어줘"' 
       }
     ]);
     setApiMessages([]);
@@ -249,7 +249,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({ setPage }) => {
           <Button variant="ghost" size="icon" onClick={() => setPage('home')}>
             <ArrowLeft size={20} />
           </Button>
-          <h2 className="text-xl font-bold ml-2">나만의 오디오 가이드 만들기</h2>
+          <h2 className="text-xl font-bold ml-2">자유 대화로 오디오 가이드 만들기</h2>
         </div>
         <Button variant="outline" size="sm" onClick={clearHistory}>
           대화 초기화
@@ -362,7 +362,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({ setPage }) => {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyPress={handleKeyPress}
-          placeholder="메시지를 입력하세요..."
+          placeholder="예: 부산 해운대에서 친구와 함께 힐링 여행 가이드 만들어줘"
           className="flex-1 bg-transparent focus:outline-none px-2 border-none focus-visible:ring-0"
           disabled={isGenerating}
         />
@@ -374,7 +374,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({ setPage }) => {
       {/* 메시지 히스토리 디버그 정보 (개발 모드에서만 표시) */}
       {process.env.NODE_ENV === 'development' && (
         <div className="mt-2 text-xs text-muted-foreground">
-          총 메시지 수: {apiMessages.length}개
+          총 메시지 수: {apiMessages.length}개 | 채팅 방식 (기존 messages 형태)
           {!ttsService && (
             <span className="ml-2 text-orange-500">
               • TTS 서비스 비활성화 (API 키 설정 필요)

@@ -22,7 +22,7 @@ const handler = async (req: VercelRequest, res: VercelResponse) => {
     // 요청 헤더에서 필요한 정보 추출 (소문자로 접근)
     const project = req.headers['project'];
     const apiKey = req.headers['apikey'];
-    const { hash, messages } = req.body;
+    const { hash, params } = req.body;
 
     // 헤더 검증
     if (!project || !apiKey) {
@@ -30,9 +30,15 @@ const handler = async (req: VercelRequest, res: VercelResponse) => {
       return;
     }
 
-    // 요청 본문 검증
-    if (!hash || !messages) {
-      res.status(400).json({ error: 'Missing required body fields: hash, messages' });
+    // 요청 본문 검증 - params 형태로 변경
+    if (!hash || !params) {
+      res.status(400).json({ error: 'Missing required body fields: hash, params' });
+      return;
+    }
+
+    // params 구조 검증
+    if (!params.place || !params.people || !params.purpose) {
+      res.status(400).json({ error: 'Missing required params fields: place, people, purpose' });
       return;
     }
 
@@ -47,7 +53,7 @@ const handler = async (req: VercelRequest, res: VercelResponse) => {
       },
       body: JSON.stringify({
         hash,
-        messages
+        params
       })
     });
 
