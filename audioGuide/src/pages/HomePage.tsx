@@ -29,14 +29,7 @@ export const HomePage: React.FC<HomePageProps> = ({ setPage }) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [selections, setSelections] = useState({ location: '', companion: '', style: '' });
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const chatEndRef = useRef<HTMLDivElement>(null);
   const [ttsService, setTtsService] = useState<TTSService | null>(null);
-
-  const scrollToBottom = () => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  useEffect(scrollToBottom, [guideResponse, isGenerating]);
 
   // TTS 서비스 초기화
   useEffect(() => {
@@ -280,10 +273,6 @@ export const HomePage: React.FC<HomePageProps> = ({ setPage }) => {
                 </div>
               ) : guideResponse ? (
                 <div className="space-y-4">
-                  <div className="p-4 bg-muted/40 rounded-lg">
-                    <p className="whitespace-pre-wrap">{guideResponse.content}</p>
-                  </div>
-                  
                   {/* TTS 기능 */}
                   {ttsService?.hasSpeakers(guideResponse.content) && (
                     <div className="space-y-3 p-4 bg-accent/10 rounded-lg border">
@@ -321,13 +310,16 @@ export const HomePage: React.FC<HomePageProps> = ({ setPage }) => {
                       )}
                     </div>
                   )}
+                  
+                  <div className="p-4 bg-muted/40 rounded-lg">
+                    <p className="whitespace-pre-wrap">{guideResponse.content}</p>
+                  </div>
                 </div>
               ) : null}
             </CardContent>
           </Card>
         )}
-        
-        <div ref={chatEndRef} />
+
       </div>
       
       {/* 하단 여백 */}

@@ -35,14 +35,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({ setPage }) => {
   const [apiMessages, setApiMessages] = useState<ApiMessage[]>([]);
   const [input, setInput] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
-  const chatEndRef = useRef<HTMLDivElement>(null);
   const [ttsService, setTtsService] = useState<TTSService | null>(null);
-
-  const scrollToBottom = () => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  useEffect(scrollToBottom, [messages, isGenerating]);
 
   // TTS 서비스 초기화
   useEffect(() => {
@@ -262,37 +255,9 @@ export const ChatPage: React.FC<ChatPageProps> = ({ setPage }) => {
             'flex flex-col gap-2', 
             msg.from === 'user' ? 'items-end' : 'items-start'
           )}>
-            <div className={cn(
-              'flex items-end gap-2', 
-              msg.from === 'user' ? 'justify-end' : 'justify-start'
-            )}>
-              {msg.from === 'bot' && (
-                <Avatar>
-                  <AvatarFallback className="bg-primary text-primary-foreground">
-                    <Bot size={20}/>
-                  </AvatarFallback>
-                </Avatar>
-              )}
-              <div className={cn(
-                'px-4 py-2 rounded-2xl max-w-xs md:max-w-md shadow-sm whitespace-pre-wrap', 
-                msg.from === 'user' 
-                  ? 'bg-primary text-primary-foreground rounded-br-none' 
-                  : 'bg-card text-card-foreground rounded-bl-none'
-              )}>
-                {msg.text}
-              </div>
-              {msg.from === 'user' && (
-                <Avatar>
-                  <AvatarFallback>
-                    <User size={20}/>
-                  </AvatarFallback>
-                </Avatar>
-              )}
-            </div>
-            
             {/* TTS 기능 - Bot 메시지이고 Speaker 형태일 때만 표시 */}
             {msg.from === 'bot' && ttsService && ttsService.hasSpeakers(msg.text) && (
-              <div className="flex flex-col gap-2 w-full max-w-md">
+              <div className="flex flex-col gap-2 w-full max-w-md mb-2">
                 {!msg.audioUrl && !msg.isGeneratingAudio && (
                   <Button 
                     variant="outline" 
@@ -336,6 +301,34 @@ export const ChatPage: React.FC<ChatPageProps> = ({ setPage }) => {
                 )}
               </div>
             )}
+            
+            <div className={cn(
+              'flex items-end gap-2', 
+              msg.from === 'user' ? 'justify-end' : 'justify-start'
+            )}>
+              {msg.from === 'bot' && (
+                <Avatar>
+                  <AvatarFallback className="bg-primary text-primary-foreground">
+                    <Bot size={20}/>
+                  </AvatarFallback>
+                </Avatar>
+              )}
+              <div className={cn(
+                'px-4 py-2 rounded-2xl max-w-xs md:max-w-md shadow-sm whitespace-pre-wrap', 
+                msg.from === 'user' 
+                  ? 'bg-primary text-primary-foreground rounded-br-none' 
+                  : 'bg-card text-card-foreground rounded-bl-none'
+              )}>
+                {msg.text}
+              </div>
+              {msg.from === 'user' && (
+                <Avatar>
+                  <AvatarFallback>
+                    <User size={20}/>
+                  </AvatarFallback>
+                </Avatar>
+              )}
+            </div>
           </div>
         ))}
         
@@ -352,8 +345,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({ setPage }) => {
             </div>
           </div>
         )}
-        
-        <div ref={chatEndRef} />
+
       </div>
       
       <div className="flex-shrink-0 flex items-center gap-2 p-2 bg-card rounded-lg border">
